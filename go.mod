@@ -1,3 +1,1 @@
-module fly
-
-go 1.16
+module github.com/chenset/fly
