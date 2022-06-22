@@ -9,6 +9,10 @@ import (
 var routers = make(map[string]map[string]*Route)
 var routeRegisterMutex sync.Mutex
 
+func ANY(path string, httpFun func(c *Context) error) *Route {
+	return registerHttpMethod(HttpANY, path, httpFun)
+}
+
 func GET(path string, httpFun func(c *Context) error) *Route {
 	return registerHttpMethod(HttpGet, path, httpFun)
 }
