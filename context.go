@@ -28,10 +28,13 @@ func NewContext(writer http.ResponseWriter, reader *http.Request) *Context {
 	return &Context{writer: writer, reader: reader, st: time.Now()}
 }
 func (my *Context) Query(k string) string {
-	//todo  implementing ..
-	//todo  implementing ..
-	return ""
+	request := my.Request()
+	if request == nil || request.URL == nil || request.URL.Query() == nil {
+		return ""
+	}
+	return request.URL.Query().Get(k)
 }
+
 func (my *Context) Post(k string) string {
 	//todo  implementing ..
 	//todo  implementing ..
