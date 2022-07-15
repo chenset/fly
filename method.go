@@ -21,6 +21,22 @@ func POST(pattern string, httpFun func(c *Context) error) *Route {
 	return registerHttpMethod(HttpPost, pattern, httpFun)
 }
 
+func OPTIONS(pattern string, httpFun func(c *Context) error) *Route {
+	return registerHttpMethod(HttpOptions, pattern, httpFun)
+}
+
+func HEAD(pattern string, httpFun func(c *Context) error) *Route {
+	return registerHttpMethod(HttpHead, pattern, httpFun)
+}
+
+func DELETE(pattern string, httpFun func(c *Context) error) *Route {
+	return registerHttpMethod(HttpDelete, pattern, httpFun)
+}
+
+func PATCH(pattern string, httpFun func(c *Context) error) *Route {
+	return registerHttpMethod(HttpPatch, pattern, httpFun)
+}
+
 func registerHttpMethod(method string, pattern string, httpFun func(c *Context) error) *Route {
 
 	routeRegisterMutex.Lock()
