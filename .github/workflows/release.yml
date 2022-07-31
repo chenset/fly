@@ -19,6 +19,8 @@ jobs:
       - run: |
           go mod download
           go build -ldflags "-s -w" 
+          git config --global user.email "4199191@gmail.com"
+          git config --global user.name "chenset"
           tag=v0.0.0-`date +'%Y%m%d%H%M%S'` 
           git tag ${tag} -m "Release ${tag}"
           git push origin ${tag}
