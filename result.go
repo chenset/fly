@@ -55,16 +55,13 @@ func writeResult(w http.ResponseWriter, result *Result, err error) {
 	switch v := result.res.(type) {
 	case string:
 		io.WriteString(w, v)
-		break
 	case []byte:
 		w.Write(v)
-		break
 	default:
 		j, err := json.Marshal(v)
 		if err != nil {
 			log.Println("failed to marsha1 of result", err)
 		}
 		w.Write(j)
-		break
 	}
 }
