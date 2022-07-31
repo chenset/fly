@@ -1,0 +1,25 @@
+name: 
+
+on:
+  push:
+    branches:
+      - 'master'
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - uses: actions/setup-go@v3
+        name: go setup
+        with:
+          go-version: '^1.18.4'
+      - run: |
+          go mod download
+          go build -ldflags "-s -w" 
+          tag=v0.0.0-`date +'%Y%m%d%H%M%S'` 
+          git tag ${tag} -m "Release ${tag}"
+          git push origin ${tag}
+

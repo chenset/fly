@@ -1,8 +1,10 @@
 package fly
 
 import (
+	"errors"
 	"io"
 	"net/http"
+	"strings"
 )
 
 type GzipResponseWriter struct {
@@ -91,6 +93,14 @@ func ListenAndServe(addr string) error {
 	globalMiddlewareLink.lastLink().addAfter(func(c *Context, _ *Link) error {
 		return nil
 	})
+
+	addr = strings.TrimSpace(addr)
+	if addr == "" {
+		return errors.New("HTTP listen addr is empty")
+	}
+	if addr[0] != ':' {
+		addr = ":" + addr
+	}
 
 	return http.ListenAndServe(addr, nil)
 }
