@@ -3,8 +3,8 @@ name:
 on:
   push:
     branches:
+      - 'main'
       - 'master'
-
 jobs:
   build_and_test:
     runs-on: ubuntu-latest
@@ -15,7 +15,7 @@ jobs:
       - uses: actions/setup-go@v3
         name: go setup
         with:
-          go-version: '^1.18.4'
+          go-version: '^1.19'
       - run: |
           go mod download
           go build -ldflags "-s -w" 
