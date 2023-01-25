@@ -2,8 +2,10 @@ package fly
 
 import (
 	"encoding/json"
+	"net"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -78,6 +80,32 @@ func (my *Context) Fail(httpCode int) error {
 		my.result = NewResult("{\"msg\":"+strconv.Quote(t)+"}", httpCode)
 	}
 	return nil
+}
+
+func (my *Context) RequestIPs() (ips []string) {
+	ip := my.RequestIP()
+	if ip != "" {
+		return []string{ip}
+	}
+	return
+}
+
+func (my *Context) RequestIP() (ip string) {
+	req := my.Request()
+	cf := strings.TrimSpace(req.Header.Get("CF-Connecting-IP"))
+	if cf != "" {
+		for _, v := range strings.Split(cf, ",") {
+			return v
+		}
+	}
+	forward := strings.TrimSpace(req.Header.Get("X-Forwarded-For"))
+	if forward != "" {
+		for _, v := range strings.Split(forward, ",") {
+			return v
+		}
+	}
+	remote, _, _ := net.SplitHostPort(req.RemoteAddr)
+	return remote
 }
 
 func (my *Context) Request() *http.Request {
