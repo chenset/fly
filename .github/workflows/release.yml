@@ -15,7 +15,7 @@ jobs:
       - uses: actions/setup-go@v3
         name: go setup
         with:
-          go-version: '^1.19'
+          go-version: '^1.19.5'
       - run: |
           go mod download
           go build -ldflags "-s -w" 
