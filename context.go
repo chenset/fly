@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -20,15 +21,31 @@ const (
 )
 
 type Context struct {
-	writer http.ResponseWriter
-	reader *http.Request
-	st     time.Time
-	result *Result
+	writer   http.ResponseWriter
+	reader   *http.Request
+	attr     map[string]interface{}
+	attrLock sync.RWMutex
+	st       time.Time
+	result   *Result
 }
 
 func NewContext(writer http.ResponseWriter, reader *http.Request) *Context {
-	return &Context{writer: writer, reader: reader, st: time.Now()}
+	return &Context{writer: writer, reader: reader, attr: make(map[string]interface{}), st: time.Now()}
 }
+
+func (my *Context) GetAttr(k string) any {
+	my.attrLock.RLock()
+	defer my.attrLock.RUnlock()
+	return my.attr[k]
+}
+
+func (my *Context) SetAttr(k string, v any) (originValue any) {
+	my.attrLock.Lock()
+	my.attr[k] = v
+	my.attrLock.Unlock()
+	return v
+}
+
 func (my *Context) Query(k string) string {
 	request := my.Request()
 	if request == nil || request.URL == nil || request.URL.Query() == nil {
