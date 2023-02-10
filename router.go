@@ -80,18 +80,21 @@ func (my *Route) Use(middleware ...func(c *Context, next *Link) error) *Route {
 
 func ListenAndServe(addr string) error {
 	//add router middleware
-	for _, m := range routers {
-		for _, router := range m {
-			cur := router
-			router.middlewareLink.lastLink().addAfter(func(c *Context, _ *Link) error {
+	routeRegisterMutex.Lock()
+	for _, m := range routes {
+		for _, route := range m {
+			cur := route
+			route.middlewareLink.lastLink().addAfter(func(c *Context, _ *Link) error {
 				return cur.httpFun(c)
 			})
 		}
 	}
+	routeRegisterMutex.Unlock()
 
 	//add last global middleware
 	globalMiddlewareLink.lastLink().addAfter(func(c *Context, _ *Link) error {
-		return nil
+		//execute router middleware
+		return c.route.middlewareLink.execute(c, c.route.middlewareLink.next)
 	})
 
 	addr = strings.TrimSpace(addr)

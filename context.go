@@ -25,12 +25,13 @@ type Context struct {
 	reader   *http.Request
 	attr     map[string]interface{}
 	attrLock sync.RWMutex
+	route    *Route
 	st       time.Time
 	result   *Result
 }
 
-func NewContext(writer http.ResponseWriter, reader *http.Request) *Context {
-	return &Context{writer: writer, reader: reader, attr: make(map[string]interface{}), st: time.Now()}
+func NewContext(route *Route, writer http.ResponseWriter, reader *http.Request) *Context {
+	return &Context{route: route, writer: writer, reader: reader, attr: make(map[string]interface{}), st: time.Now()}
 }
 
 func (my *Context) GetAttr(k string) any {
