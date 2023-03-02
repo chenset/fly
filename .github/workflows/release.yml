@@ -15,13 +15,13 @@ jobs:
       - uses: actions/setup-go@v3
         name: go setup
         with:
-          go-version: '^1.19.5'
+          go-version: '^1.20.0'
       - run: |
           go mod download
           go build -ldflags "-s -w" 
           git config --global user.email "4199191@gmail.com"
           git config --global user.name "chenset"
-          tag=v0.0.0-`date +'%Y%m%d%H%M%S'` 
+          tag=v0.3.0-`date +'%Y%m%d%H%M%S'` 
           git tag ${tag} -m "Release ${tag}"
           git push origin ${tag}
 

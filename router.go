@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"time"
 )
 
 type GzipResponseWriter struct {
@@ -105,5 +106,6 @@ func ListenAndServe(addr string) error {
 		addr = ":" + addr
 	}
 
-	return http.ListenAndServe(addr, nil)
+	// http.Serve(ln, nil)
+	return (&http.Server{Addr: addr, Handler: nil, ReadHeaderTimeout: time.Second * 30, WriteTimeout: time.Second * 60, ErrorLog: flyDefaultErrorLogger}).ListenAndServe()
 }
