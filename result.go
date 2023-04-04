@@ -12,7 +12,7 @@ import (
 func httpFunc(c *Context, err error) {
 	if c.writer.Header().Get("Content-Type") == "" {
 		//set default Content-Type
-		c.writer.Header().Set("Content-Type", "application/json;charset=utf8")
+		c.writer.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	}
 	//c.writer.Header().Set("Connection", "keep-alive")
 	//gzip
