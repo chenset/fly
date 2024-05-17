@@ -4,6 +4,7 @@ import (
 	"errors"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -103,7 +104,9 @@ func ListenAndServe(addr string) error {
 		return errors.New("HTTP listen addr is empty")
 	}
 	if addr[0] != ':' {
-		addr = ":" + addr
+		if _, err := strconv.ParseInt(addr, 10, 64); err == nil {
+			addr = ":" + addr
+		}
 	}
 
 	// http.Serve(ln, nil)
