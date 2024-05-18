@@ -3,6 +3,7 @@ package fly
 import (
 	"errors"
 	"io"
+	"net"
 	"net/http"
 	"strconv"
 	"strings"
@@ -81,7 +82,11 @@ func (my *Route) Use(middleware ...func(c *Context, next *Link) error) *Route {
 }
 
 func ListenAndServe(addr string) error {
-	//add router middleware
+	return ListenAndServeNetwork("tcp", addr)
+}
+
+func ListenAndServeNetwork(network, addr string) error {
+	// add router middleware
 	routeRegisterMutex.Lock()
 	for _, m := range routes {
 		for _, route := range m {
@@ -93,7 +98,7 @@ func ListenAndServe(addr string) error {
 	}
 	routeRegisterMutex.Unlock()
 
-	//add last global middleware
+	// add last global middleware
 	globalMiddlewareLink.lastLink().addAfter(func(c *Context, _ *Link) error {
 		//execute router middleware
 		return c.route.middlewareLink.execute(c, c.route.middlewareLink.next)
@@ -109,6 +114,12 @@ func ListenAndServe(addr string) error {
 		}
 	}
 
-	// http.Serve(ln, nil)
-	return (&http.Server{Addr: addr, Handler: nil, ReadHeaderTimeout: time.Second * 30, WriteTimeout: time.Second * 60, ErrorLog: flyDefaultErrorLogger}).ListenAndServe()
+	//http.ListenAndServe
+
+	srv := &http.Server{Addr: addr, Handler: nil, ReadHeaderTimeout: time.Second * 30, WriteTimeout: time.Second * 60, ErrorLog: flyDefaultErrorLogger}
+	ln, err := net.Listen(network, addr)
+	if err != nil {
+		return err
+	}
+	return srv.Serve(ln)
 }
