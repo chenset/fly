@@ -80,6 +80,15 @@ func (my *Context) Json(v interface{}) error {
 	return err
 }
 
+func (my *Context) TemporaryRedirect(location string) error {
+	// 设置 Location 头
+	my.Writer().Header().Set("Location", location)
+	// 设置 307 状态码
+	// my.Writer().WriteHeader(http.StatusTemporaryRedirect)
+	my.result = NewResult(nil, http.StatusTemporaryRedirect)
+	return nil
+}
+
 func (my *Context) Error(message string) error {
 	my.result = NewResult("{\"msg\":"+strconv.Quote(message)+"}", http.StatusUnprocessableEntity)
 	return nil
@@ -89,6 +98,7 @@ func (my *Context) Success(message string) error {
 	my.result = NewResult("{\"msg\":"+strconv.Quote(message)+"}", http.StatusOK)
 	return nil
 }
+
 func (my *Context) Fail(httpCode int) error {
 	t := http.StatusText(httpCode)
 	if t == "" {
