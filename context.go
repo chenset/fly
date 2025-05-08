@@ -89,6 +89,15 @@ func (my *Context) TemporaryRedirect(location string) error {
 	return nil
 }
 
+func (my *Context) PermanentRedirect(location string) error {
+	// 设置 Location 头
+	my.Writer().Header().Set("Location", location)
+	// 设置 307 状态码
+	// my.Writer().WriteHeader(http.StatusTemporaryRedirect)
+	my.result = NewResult(nil, http.StatusPermanentRedirect)
+	return nil
+}
+
 func (my *Context) Error(message string) error {
 	my.result = NewResult("{\"msg\":"+strconv.Quote(message)+"}", http.StatusUnprocessableEntity)
 	return nil
